@@ -134,16 +134,16 @@
 
 <body onload="iniFunc()">
     <h3 style="padding-left:1em">聴取実験</h3>
-    <p>複数の音を聞いて指示されたとおりの聞こえ方の音を選んでください．2問1セットのものが12セット用意されています．<br />
+    <p>3種類の音が混ざった音を複数聞いて指示されたとおりの聞こえ方の音を選んでください．2問1セットのものが12セット用意されています．<br />
     【手順】<br />
     Data1の#1から始めてください．<br />
     1. Play/Stopボタンを押すと音が再生されますので，聞きやすい音量になるようPCの音量を調節してください．<br />
     2. バーを動かしてマウスを離すと音が切り替わります．ドラッグしたままでは音は切り替わりません．バーが一番右にあるときは音が流れません．<br />
     3. バーを左端から右端まで順に動かして全ての音を聞いた後，指示に最も適した聞こえ方をする位置にバーを合わせてから，Play/Stopボタンで音を止めます．選び直したいときは再度Play/Stopボタンで音を再生できます．<br />
-    4. Play/Stopボタン下の質問「途中で音源が移動したように聞こえましたか？」に答えてください．答えを選んでから回答欄横のOKボタンを押すと回答完了です．<br />
+    4. Play/Stopボタン下の質問「途中で音が移動したように聞こえましたか？」に答えてください．音を選んでいる途中で，バーが左端にあるときと比べてそれぞれの音が移動しているように聞こえたかを答えてください．（例えば，初めは右から男性の声が聞こえていたが，途中左から聞こえることがあった，など）答えを選んでから回答欄横のOKボタンを押すと回答完了です．<br />
     5. 続いて#2でも同様に音を聞き，質問に答えてください．<br />
     6. #1, #2の回答が済んだら枠の外の質問「音が選びやすい(聞き比べがやりやすい)のはどちらでしたか？」に答えてください．このとき音の聞き直しができませんので十分注意してください．<br />
-    7. 回答漏れがないか確認してからAnswer Saveボタンを押します．(回答漏れがあると警告が出ます)<br />
+    7. 回答漏れがないか確認してからAnswer Saveボタンを押します．ボタンは1回のみ押してください．また，回答漏れがあると警告が出ますのでその場合は回答をし直して再度ボタンを押してください．<br />
     8. 次のData2以降も上記と同様の手順で回答をします．<br />
     9. Data12まで終了したら，最後にFINISHボタンを押してください．表示された指示に従ってファイルの保存を行ってください．保存したファイルはsuzuki.tomomi@g.sp.m.is.nagoya-u.ac.jp宛てに送信してください．<br />
     * 注意事項 *<br />
@@ -162,7 +162,7 @@
                 <script language="JavaScript">document.write("#1".bold())</script>
                 <button onclick="AudioButtonFunc()">Play/Stop</button>
                 <input id="slider01_1" type="range" min="0" max="7" step="1" value="0" onchange="showValue()" />
-                <p class="lowHigh">Q. 途中で音源が移動したように聞こえましたか？</p>
+                <p class="lowHigh">Q. 途中で音が移動したように聞こえましたか？</p>
                 <select id="selectMv01_1" onchange="saveAnsFunc(2)">
                     <option value="">*選んでください</option>
                     <option value="1">はい</option>
@@ -175,7 +175,7 @@
                 <script language="JavaScript">document.write("#2".bold())</script>
                 <button onclick="AudioButtonFunc()">Play/Stop</button>
                 <input id="slider01_2" type="range" min="0" max="7" step="1" value="0" onchange="showValue()" />
-                <p class="lowHigh">Q. 途中で音源が移動したように聞こえましたか？</p>
+                <p class="lowHigh">Q. 途中で音が移動したように聞こえましたか？</p>
                 <select id="selectMv01_2" onchange="saveAnsFunc(2)">
                     <option value="">*選んでください</option>
                     <option value="1">はい</option>
@@ -211,7 +211,7 @@
                 <script language="JavaScript">document.write("#1".bold())</script>
                 <button onclick="AudioButtonFunc()">Play/Stop</button>
                 <input id="slider02_1" type="range" min="0" max="7" step="1" value="0" onchange="showValue()" />
-                <p class="lowHigh">Q. 途中で音源が移動したように聞こえましたか？</p>
+                <p class="lowHigh">Q. 途中で音が移動したように聞こえましたか？</p>
                 <select id="selectMv02_1" onchange="saveAnsFunc(2)">
                     <option value="">*選んでください</option>
                     <option value="1">はい</option>
@@ -224,7 +224,7 @@
                 <script language="JavaScript">document.write("#2".bold())</script>
                 <button onclick="AudioButtonFunc()">Play/Stop</button>
                 <input id="slider02_2" type="range" min="0" max="7" step="1" value="0" onchange="showValue()" />
-                <p class="lowHigh">Q. 途中で音源が移動したように聞こえましたか？</p>
+                <p class="lowHigh">Q. 途中で音が移動したように聞こえましたか？</p>
                 <select id="selectMv02_2" onchange="saveAnsFunc(2)">
                     <option value="">*選んでください</option>
                     <option value="1">はい</option>
@@ -260,7 +260,7 @@
                 <script language="JavaScript">document.write("#1".bold())</script>
                 <button onclick="AudioButtonFunc()">Play/Stop</button>
                 <input id="slider03_1" type="range" min="0" max="7" step="1" value="0" onchange="showValue()" />
-                <p class="lowHigh">Q. 途中で音源が移動したように聞こえましたか？</p>
+                <p class="lowHigh">Q. 途中で音が移動したように聞こえましたか？</p>
                 <select id="selectMv03_1" onchange="saveAnsFunc(2)">
                     <option value="">*選んでください</option>
                     <option value="1">はい</option>
@@ -273,7 +273,7 @@
                 <script language="JavaScript">document.write("#2".bold())</script>
                 <button onclick="AudioButtonFunc()">Play/Stop</button>
                 <input id="slider03_2" type="range" min="0" max="7" step="1" value="0" onchange="showValue()" />
-                <p class="lowHigh">Q. 途中で音源が移動したように聞こえましたか？</p>
+                <p class="lowHigh">Q. 途中で音が移動したように聞こえましたか？</p>
                 <select id="selectMv03_2" onchange="saveAnsFunc(2)">
                     <option value="">*選んでください</option>
                     <option value="1">はい</option>
@@ -309,7 +309,7 @@
                 <script language="JavaScript">document.write("#1".bold())</script>
                 <button onclick="AudioButtonFunc()">Play/Stop</button>
                 <input id="slider04_1" type="range" min="0" max="7" step="1" value="0" onchange="showValue()" />
-                <p class="lowHigh">Q. 途中で音源が移動したように聞こえましたか？</p>
+                <p class="lowHigh">Q. 途中で音が移動したように聞こえましたか？</p>
                 <select id="selectMv04_1" onchange="saveAnsFunc(2)">
                     <option value="">*選んでください</option>
                     <option value="1">はい</option>
@@ -322,7 +322,7 @@
                 <script language="JavaScript">document.write("#2".bold())</script>
                 <button onclick="AudioButtonFunc()">Play/Stop</button>
                 <input id="slider04_2" type="range" min="0" max="7" step="1" value="0" onchange="showValue()" />
-                <p class="lowHigh">Q. 途中で音源が移動したように聞こえましたか？</p>
+                <p class="lowHigh">Q. 途中で音が移動したように聞こえましたか？</p>
                 <select id="selectMv04_2" onchange="saveAnsFunc(2)">
                     <option value="">*選んでください</option>
                     <option value="1">はい</option>
@@ -358,7 +358,7 @@
                 <script language="JavaScript">document.write("#1".bold())</script>
                 <button onclick="AudioButtonFunc()">Play/Stop</button>
                 <input id="slider05_1" type="range" min="0" max="7" step="1" value="0" onchange="showValue()" />
-                <p class="lowHigh">Q. 途中で音源が移動したように聞こえましたか？</p>
+                <p class="lowHigh">Q. 途中で音が移動したように聞こえましたか？</p>
                 <select id="selectMv05_1" onchange="saveAnsFunc(2)">
                     <option value="">*選んでください</option>
                     <option value="1">はい</option>
@@ -371,7 +371,7 @@
                 <script language="JavaScript">document.write("#2".bold())</script>
                 <button onclick="AudioButtonFunc()">Play/Stop</button>
                 <input id="slider05_2" type="range" min="0" max="7" step="1" value="0" onchange="showValue()" />
-                <p class="lowHigh">Q. 途中で音源が移動したように聞こえましたか？</p>
+                <p class="lowHigh">Q. 途中で音が移動したように聞こえましたか？</p>
                 <select id="selectMv05_2" onchange="saveAnsFunc(2)">
                     <option value="">*選んでください</option>
                     <option value="1">はい</option>
@@ -407,7 +407,7 @@
                 <script language="JavaScript">document.write("#1".bold())</script>
                 <button onclick="AudioButtonFunc()">Play/Stop</button>
                 <input id="slider06_1" type="range" min="0" max="7" step="1" value="0" onchange="showValue()" />
-                <p class="lowHigh">Q. 途中で音源が移動したように聞こえましたか？</p>
+                <p class="lowHigh">Q. 途中で音が移動したように聞こえましたか？</p>
                 <select id="selectMv06_1" onchange="saveAnsFunc(2)">
                     <option value="">*選んでください</option>
                     <option value="1">はい</option>
@@ -420,7 +420,7 @@
                 <script language="JavaScript">document.write("#2".bold())</script>
                 <button onclick="AudioButtonFunc()">Play/Stop</button>
                 <input id="slider06_2" type="range" min="0" max="7" step="1" value="0" onchange="showValue()" />
-                <p class="lowHigh">Q. 途中で音源が移動したように聞こえましたか？</p>
+                <p class="lowHigh">Q. 途中で音が移動したように聞こえましたか？</p>
                 <select id="selectMv06_2" onchange="saveAnsFunc(2)">
                     <option value="">*選んでください</option>
                     <option value="1">はい</option>
@@ -456,7 +456,7 @@
                 <script language="JavaScript">document.write("#1".bold())</script>
                 <button onclick="AudioButtonFunc()">Play/Stop</button>
                 <input id="slider07_1" type="range" min="0" max="7" step="1" value="0" onchange="showValue()" />
-                <p class="lowHigh">Q. 途中で音源が移動したように聞こえましたか？</p>
+                <p class="lowHigh">Q. 途中で音が移動したように聞こえましたか？</p>
                 <select id="selectMv07_1" onchange="saveAnsFunc(2)">
                     <option value="">*選んでください</option>
                     <option value="1">はい</option>
@@ -469,7 +469,7 @@
                 <script language="JavaScript">document.write("#2".bold())</script>
                 <button onclick="AudioButtonFunc()">Play/Stop</button>
                 <input id="slider07_2" type="range" min="0" max="7" step="1" value="0" onchange="showValue()" />
-                <p class="lowHigh">Q. 途中で音源が移動したように聞こえましたか？</p>
+                <p class="lowHigh">Q. 途中で音が移動したように聞こえましたか？</p>
                 <select id="selectMv07_2" onchange="saveAnsFunc(2)">
                     <option value="">*選んでください</option>
                     <option value="1">はい</option>
@@ -505,7 +505,7 @@
                 <script language="JavaScript">document.write("#1".bold())</script>
                 <button onclick="AudioButtonFunc()">Play/Stop</button>
                 <input id="slider08_1" type="range" min="0" max="7" step="1" value="0" onchange="showValue()" />
-                <p class="lowHigh">Q. 途中で音源が移動したように聞こえましたか？</p>
+                <p class="lowHigh">Q. 途中で音が移動したように聞こえましたか？</p>
                 <select id="selectMv08_1" onchange="saveAnsFunc(2)">
                     <option value="">*選んでください</option>
                     <option value="1">はい</option>
@@ -518,7 +518,7 @@
                 <script language="JavaScript">document.write("#2".bold())</script>
                 <button onclick="AudioButtonFunc()">Play/Stop</button>
                 <input id="slider08_2" type="range" min="0" max="7" step="1" value="0" onchange="showValue()" />
-                <p class="lowHigh">Q. 途中で音源が移動したように聞こえましたか？</p>
+                <p class="lowHigh">Q. 途中で音が移動したように聞こえましたか？</p>
                 <select id="selectMv08_2" onchange="saveAnsFunc(2)">
                     <option value="">*選んでください</option>
                     <option value="1">はい</option>
@@ -554,7 +554,7 @@
                 <script language="JavaScript">document.write("#1".bold())</script>
                 <button onclick="AudioButtonFunc()">Play/Stop</button>
                 <input id="slider09_1" type="range" min="0" max="7" step="1" value="0" onchange="showValue()" />
-                <p class="lowHigh">Q. 途中で音源が移動したように聞こえましたか？</p>
+                <p class="lowHigh">Q. 途中で音が移動したように聞こえましたか？</p>
                 <select id="selectMv09_1" onchange="saveAnsFunc(2)">
                     <option value="">*選んでください</option>
                     <option value="1">はい</option>
@@ -567,7 +567,7 @@
                 <script language="JavaScript">document.write("#2".bold())</script>
                 <button onclick="AudioButtonFunc()">Play/Stop</button>
                 <input id="slider09_2" type="range" min="0" max="7" step="1" value="0" onchange="showValue()" />
-                <p class="lowHigh">Q. 途中で音源が移動したように聞こえましたか？</p>
+                <p class="lowHigh">Q. 途中で音が移動したように聞こえましたか？</p>
                 <select id="selectMv09_2" onchange="saveAnsFunc(2)">
                     <option value="">*選んでください</option>
                     <option value="1">はい</option>
@@ -603,7 +603,7 @@
                 <script language="JavaScript">document.write("#1".bold())</script>
                 <button onclick="AudioButtonFunc()">Play/Stop</button>
                 <input id="slider10_1" type="range" min="0" max="7" step="1" value="0" onchange="showValue()" />
-                <p class="lowHigh">Q. 途中で音源が移動したように聞こえましたか？</p>
+                <p class="lowHigh">Q. 途中で音が移動したように聞こえましたか？</p>
                 <select id="selectMv10_1" onchange="saveAnsFunc(2)">
                     <option value="">*選んでください</option>
                     <option value="1">はい</option>
@@ -616,7 +616,7 @@
                 <script language="JavaScript">document.write("#2".bold())</script>
                 <button onclick="AudioButtonFunc()">Play/Stop</button>
                 <input id="slider10_2" type="range" min="0" max="7" step="1" value="0" onchange="showValue()" />
-                <p class="lowHigh">Q. 途中で音源が移動したように聞こえましたか？</p>
+                <p class="lowHigh">Q. 途中で音が移動したように聞こえましたか？</p>
                 <select id="selectMv10_2" onchange="saveAnsFunc(2)">
                     <option value="">*選んでください</option>
                     <option value="1">はい</option>
@@ -652,7 +652,7 @@
                 <script language="JavaScript">document.write("#1".bold())</script>
                 <button onclick="AudioButtonFunc()">Play/Stop</button>
                 <input id="slider11_1" type="range" min="0" max="7" step="1" value="0" onchange="showValue()" />
-                <p class="lowHigh">Q. 途中で音源が移動したように聞こえましたか？</p>
+                <p class="lowHigh">Q. 途中で音が移動したように聞こえましたか？</p>
                 <select id="selectMv11_1" onchange="saveAnsFunc(2)">
                     <option value="">*選んでください</option>
                     <option value="1">はい</option>
@@ -665,7 +665,7 @@
                 <script language="JavaScript">document.write("#2".bold())</script>
                 <button onclick="AudioButtonFunc()">Play/Stop</button>
                 <input id="slider11_2" type="range" min="0" max="7" step="1" value="0" onchange="showValue()" />
-                <p class="lowHigh">Q. 途中で音源が移動したように聞こえましたか？</p>
+                <p class="lowHigh">Q. 途中で音が移動したように聞こえましたか？</p>
                 <select id="selectMv11_2" onchange="saveAnsFunc(2)">
                     <option value="">*選んでください</option>
                     <option value="1">はい</option>
@@ -701,7 +701,7 @@
                 <script language="JavaScript">document.write("#1".bold())</script>
                 <button onclick="AudioButtonFunc()">Play/Stop</button>
                 <input id="slider12_1" type="range" min="0" max="7" step="1" value="0" onchange="showValue()" />
-                <p class="lowHigh">Q. 途中で音源が移動したように聞こえましたか？</p>
+                <p class="lowHigh">Q. 途中で音が移動したように聞こえましたか？</p>
                 <select id="selectMv12_1" onchange="saveAnsFunc(2)">
                     <option value="">*選んでください</option>
                     <option value="1">はい</option>
@@ -714,7 +714,7 @@
                 <script language="JavaScript">document.write("#2".bold())</script>
                 <button onclick="AudioButtonFunc()">Play/Stop</button>
                 <input id="slider12_2" type="range" min="0" max="7" step="1" value="0" onchange="showValue()" />
-                <p class="lowHigh">Q. 途中で音源が移動したように聞こえましたか？</p>
+                <p class="lowHigh">Q. 途中で音が移動したように聞こえましたか？</p>
                 <select id="selectMv12_2" onchange="saveAnsFunc(2)">
                     <option value="">*選んでください</option>
                     <option value="1">はい</option>
