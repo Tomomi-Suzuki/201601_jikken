@@ -1,0 +1,730 @@
+﻿<!DOCTYPE>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>TEST</title>
+
+    <style type="text/css">
+        p { width: 100%; }
+        p.lowHigh { line-height: 30%; }
+    </style>
+
+    <script src="jquery-1.7.1.min.js"></script>
+    <script type="text/javascript" src="three.min.js"></script>
+    <script type="text/javascript" src="functionList.js"></script>
+    <script type="text/javascript" src="fileLink.js"></script>
+    <!--<script type="text/javascript" src="thview_soundGSV.js"></script>-->
+    <!--<script type="text/javascript" src="thview.js"></script>-->
+
+    <script type="text/javascript">
+        /* 結果を保持する配列 */
+        var selectAns = new Array();
+        for (var i = 0; i < 12; ++i) {
+            selectAns[i] = new Array();
+        }
+
+        /* 音声ファイルの読み込み */
+        var filePlaying = 0;
+        var playNum = 0;
+        var ptnPlaying = 0;  // パターン選択回答用
+        var ptnAsking = 1;   // 移動有無回答用
+        var AnsFill = 0;
+        var audioFile = new Array();
+        var point = new Array();
+        point[0] = new Array();
+        point[0][0] = new Array("111", "110", "100", "101", "001", "011", "010", "000");   // ハミング経路
+        point[0][1] = new Array("111", "001", "110", "011", "010", "101", "100", "000");   // ランダム経路
+        point[1] = new Array();
+        point[1][0] = new Array("111", "001", "110", "011", "010", "101", "100", "000");   // ランダム経路
+        point[1][1] = new Array("111", "011", "001", "101", "100", "110", "010", "000");   // ハミング経路
+        point[2] = new Array();
+        point[2][0] = new Array("111", "001", "100", "010", "011", "101", "110", "000");   // ランダム経路
+        point[2][1] = new Array("111", "110", "010", "011", "001", "101", "100", "000");   // ハミング経路
+        point[3] = new Array();
+        point[3][0] = new Array("111", "110", "010", "011", "001", "101", "100", "000");   // ハミング経路
+        point[3][1] = new Array("111", "101", "011", "001", "110", "100", "010", "000");   // ランダム経路
+        point[4] = new Array();
+        point[4][0] = new Array("111", "110", "001", "101", "010", "100", "011", "000");   // ランダム経路
+        point[4][1] = new Array("111", "101", "100", "110", "010", "011", "001", "000");   // ハミング経路
+        point[5] = new Array();
+        point[5][0] = new Array("111", "011", "010", "110", "100", "101", "001", "000");   // ハミング経路
+        point[5][1] = new Array("111", "110", "001", "101", "010", "100", "011", "000");   // ランダム経路
+        point[6] = new Array();
+        point[6][0] = new Array("111", "011", "010", "110", "100", "101", "001", "000");   // ハミング経路
+        point[6][1] = new Array("111", "010", "011", "100", "101", "110", "001", "000");   // ランダム経路
+        point[7] = new Array();
+        point[7][0] = new Array("111", "001", "100", "101", "010", "110", "011", "000");   // ランダム経路
+        point[7][1] = new Array("111", "101", "100", "110", "010", "011", "001", "000");   // ハミング経路
+        point[8] = new Array();
+        point[8][0] = new Array("111", "001", "100", "101", "010", "110", "011", "000");   // ランダム経路
+        point[8][1] = new Array("111", "101", "001", "011", "010", "110", "100", "000");   // ハミング経路
+        point[9] = new Array();
+        point[9][0] = new Array("111", "101", "001", "011", "010", "110", "100", "000");   // ハミング経路
+        point[9][1] = new Array("111", "001", "100", "010", "011", "101", "110", "000");   // ランダム経路
+        point[10] = new Array();
+        point[10][0] = new Array("111", "101", "011", "001", "110", "100", "010", "000");   // ランダム経路
+        point[10][1] = new Array("111", "110", "100", "101", "001", "011", "010", "000");   // ハミング経路
+        point[11] = new Array();
+        point[11][0] = new Array("111", "011", "001", "101", "100", "110", "010", "000");   // ハミング経路
+        point[11][1] = new Array("111", "010", "011", "100", "101", "110", "001", "000");   // ランダム経路
+                
+        var audioFile = new Array();
+        audioFile[0]  = "sound/3srcs_org1/org3src_sw";
+        audioFile[1]  = "sound/outside/1c/1c_sw";
+        audioFile[2]  = "sound/outside/2c/2c_sw";
+        audioFile[3]  = "sound/3srcs/ho1000_sp_f120_sp_m240_sw";
+        audioFile[4]  = audioFile[1]
+        audioFile[5]  = "sound/3srcs_org2/org3src_sw";
+        audioFile[6]  = audioFile[2];
+        audioFile[7]  = audioFile[3];
+        audioFile[8]  = audioFile[5];
+        audioFile[9]  = audioFile[1];
+        audioFile[10] = audioFile[0];
+        audioFile[11] = audioFile[2];
+        var array = new Array();
+
+        // 各ファイルが終わったら回答漏れがないか確認，なければ次の音データを読み込み
+        function saveArrayFunc() {
+            for (var i = 0; i < 5; ++i) {
+                if (selectAns[filePlaying][i] != null) {
+                    AnsFill = AnsFill + 1;
+                }
+            }
+            if (AnsFill == 5){
+                filePlaying = filePlaying + 1;
+                if (filePlaying < 12){
+                loadSound();
+                }
+            } else{
+                alert("回答が済んでいません!");
+            }
+            AnsFill = 0;
+        }   // END saveAnsFunc
+
+        // 回答をファイルにして保存
+        function saveFunc() {
+            var data = selectAns;
+            if (data.length) {
+                var obj = document.getElementById("anchor");
+                obj.href = "data:application/octet-stream," +
+                           encodeURIComponent(data);
+                obj.innerHTML = "右クリックでリンク先を保存して下さい";
+            }
+        }   // END saveFunc
+
+        // ------------------------------------------------------------
+        // リッスンを開始する
+        // ------------------------------------------------------------
+        // イベントリスナーに対応している
+        if (document.addEventListener) {
+            // マウスカーソルを移動すると実行されるイベント
+            //document.addEventListener("mousemove", ChangeVolume);
+            // キーボードを押したときに実行されるイベント
+            document.addEventListener("keypress", KeyDownFunc);
+
+            // アタッチイベントに対応している
+        } else if (document.attachEvent) {
+            // マウスカーソルを移動すると実行されるイベント
+            //document.attachEvent("onmousemove", ChangeVolume);
+            // キーボードを押したときに実行されるイベント
+            document.attachEvent("onkeydown", KeyDownFunc);
+        }
+    </script>
+</head>
+
+<body onload="iniFunc()">
+    <h3 style="padding-left:1em">聴取実験</h3>
+    <!-- <<Data 1>>------------------------------------------------------------------------------------------- -->
+    <hr align="left" width="1100" color="#ffc8c8">
+    <h3 style="padding-left:10pt">Data 1. 男性の声が最も聞き取りやすいものをそれぞれ選んでください</h3>
+    <!--音の再生・選択-->
+    <table border="1" width="900" height="100">
+        <tr>
+            <!--#1-->
+            <td>
+                <script language="JavaScript">document.write("#1".bold())</script>
+                <button onclick="AudioButtonFunc()">Play/Stop</button>
+                <input id="slider01_1" type="range" min="0" max="7" step="1" value="0" onchange="showValue()" />
+                <p class="lowHigh">Q. 途中で音源が移動したように聞こえましたか？</p>
+                <select id="selectMv01_1" onchange="saveAnsFunc(2)">
+                    <option value="">*選んでください</option>
+                    <option value="1">はい</option>
+                    <option value="0">いいえ</option>
+                </select>
+                <button onclick="OkButtonFunc()">OK!</button>
+            </td>
+            <!--#2-->
+            <td>
+                <script language="JavaScript">document.write("#2".bold())</script>
+                <button onclick="AudioButtonFunc()">Play/Stop</button>
+                <input id="slider01_2" type="range" min="0" max="7" step="1" value="0" onchange="showValue()" />
+                <p class="lowHigh">Q. 途中で音源が移動したように聞こえましたか？</p>
+                <select id="selectMv01_2" onchange="saveAnsFunc(2)">
+                    <option value="">*選んでください</option>
+                    <option value="1">はい</option>
+                    <option value="0">いいえ</option>
+                </select>
+                <button onclick="OkButtonFunc()">OK!</button>
+            </td>
+        </tr>
+    </table>
+    <!--評価回答-->
+    <form name="selectbox">
+        <p class="lowHigh">Q. 音が選びやすい(聞き比べがやりやすい)のはどちらでしたか？</p>
+        <select id="selectEf01" onchange="saveAnsFunc(1)">
+            <option value="">*選んでください</option>
+            <option value="1">#1</option>
+            <option value="2">#2</option>
+            <option value="0">どちらも変わらなかった</option>
+        </select>
+    </form>
+    <!--結果を書き込み-->
+    <button onclick="saveArrayFunc();">Answer1 Save</button>
+    <a id="saveArray" href=""></a>
+    <p class="ls_normal"></p>
+
+    <!-- <<Data 2>>--------------------------------------------------------------------------------------------- -->
+    <hr align="left" width="1200" color="#ffc8c8">
+    <h3 style="padding-left:10pt">Data 2. 女性の声が最も聞き取りやすいものをそれぞれ選んでください</h3>
+    <!--音の再生・選択-->
+    <table border="1" width="900" height="100">
+        <tr>
+            <!--#1-->
+            <td>
+                <script language="JavaScript">document.write("#1".bold())</script>
+                <button onclick="AudioButtonFunc()">Play/Stop</button>
+                <input id="slider02_1" type="range" min="0" max="7" step="1" value="0" onchange="showValue()" />
+                <p class="lowHigh">Q. 途中で音源が移動したように聞こえましたか？</p>
+                <select id="selectMv02_1" onchange="saveAnsFunc(2)">
+                    <option value="">*選んでください</option>
+                    <option value="1">はい</option>
+                    <option value="0">いいえ</option>
+                </select>
+                <button onclick="OkButtonFunc()">OK!</button>
+            </td>
+            <!--#2-->
+            <td>
+                <script language="JavaScript">document.write("#2".bold())</script>
+                <button onclick="AudioButtonFunc()">Play/Stop</button>
+                <input id="slider02_2" type="range" min="0" max="7" step="1" value="0" onchange="showValue()" />
+                <p class="lowHigh">Q. 途中で音源が移動したように聞こえましたか？</p>
+                <select id="selectMv02_2" onchange="saveAnsFunc(2)">
+                    <option value="">*選んでください</option>
+                    <option value="1">はい</option>
+                    <option value="0">いいえ</option>
+                </select>
+                <button onclick="OkButtonFunc()">OK!</button>
+            </td>
+        </tr>
+    </table>
+    <!--評価回答-->
+    <form name="selectbox">
+        <p class="lowHigh">Q. 音が選びやすい(聞き比べがやりやすい)のはどちらでしたか？</p>
+        <select id="selectEf02" onchange="saveAnsFunc(1)">
+            <option value="">*選んでください</option>
+            <option value="1">#1</option>
+            <option value="2">#2</option>
+            <option value="0">どちらも変わらなかった</option>
+        </select>
+    </form>
+    <!--結果を書き込み-->
+    <button onclick="saveArrayFunc();">Answer2 Save</button>
+    <a id="saveArray" href=""></a>
+    <p class="ls_normal"></p>
+
+    <!-- <<Data 3>>--------------------------------------------------------------------------------------------- -->
+    <hr align="left" width="1200" color="#ffc8c8">
+    <h3 style="padding-left:10pt">Data 3. 目覚まし時計の音が最も聞き取りやすいものをそれぞれ選んでください</h3>
+    <!--音の再生・選択-->
+    <table border="1" width="900" height="100">
+        <tr>
+            <!--#1-->
+            <td>
+                <script language="JavaScript">document.write("#1".bold())</script>
+                <button onclick="AudioButtonFunc()">Play/Stop</button>
+                <input id="slider03_1" type="range" min="0" max="7" step="1" value="0" onchange="showValue()" />
+                <p class="lowHigh">Q. 途中で音源が移動したように聞こえましたか？</p>
+                <select id="selectMv03_1" onchange="saveAnsFunc(2)">
+                    <option value="">*選んでください</option>
+                    <option value="1">はい</option>
+                    <option value="0">いいえ</option>
+                </select>
+                <button onclick="OkButtonFunc()">OK!</button>
+            </td>
+            <!--#2-->
+            <td>
+                <script language="JavaScript">document.write("#2".bold())</script>
+                <button onclick="AudioButtonFunc()">Play/Stop</button>
+                <input id="slider03_2" type="range" min="0" max="7" step="1" value="0" onchange="showValue()" />
+                <p class="lowHigh">Q. 途中で音源が移動したように聞こえましたか？</p>
+                <select id="selectMv03_2" onchange="saveAnsFunc(2)">
+                    <option value="">*選んでください</option>
+                    <option value="1">はい</option>
+                    <option value="0">いいえ</option>
+                </select>
+                <button onclick="OkButtonFunc()">OK!</button>
+            </td>
+        </tr>
+    </table>
+    <!--評価回答-->
+    <form name="selectbox">
+        <p class="lowHigh">Q. 音が選びやすい(聞き比べがやりやすい)のはどちらでしたか？</p>
+        <select id="selectEf03" onchange="saveAnsFunc(1)">
+            <option value="">*選んでください</option>
+            <option value="1">#1</option>
+            <option value="2">#2</option>
+            <option value="0">どちらも変わらなかった</option>
+        </select>
+    </form>
+    <!--結果を書き込み-->
+    <button onclick="saveArrayFunc();">Answer3 Save</button>
+    <a id="saveArray" href=""></a>
+    <p class="ls_normal"></p>
+
+    <!-- <<Data 4>>--------------------------------------------------------------------------------------------- -->
+    <hr align="left" width="1200" color="#ffc8c8">
+    <h3 style="padding-left:10pt">Data 4. 女性の声が最も聞き取りやすいものをそれぞれ選んでください</h3>
+    <!--音の再生・選択-->
+    <table border="1" width="900" height="100">
+        <tr>
+            <!--#1-->
+            <td>
+                <script language="JavaScript">document.write("#1".bold())</script>
+                <button onclick="AudioButtonFunc()">Play/Stop</button>
+                <input id="slider04_1" type="range" min="0" max="7" step="1" value="0" onchange="showValue()" />
+                <p class="lowHigh">Q. 途中で音源が移動したように聞こえましたか？</p>
+                <select id="selectMv04_1" onchange="saveAnsFunc(2)">
+                    <option value="">*選んでください</option>
+                    <option value="1">はい</option>
+                    <option value="0">いいえ</option>
+                </select>
+                <button onclick="OkButtonFunc()">OK!</button>
+            </td>
+            <!--#2-->
+            <td>
+                <script language="JavaScript">document.write("#2".bold())</script>
+                <button onclick="AudioButtonFunc()">Play/Stop</button>
+                <input id="slider04_2" type="range" min="0" max="7" step="1" value="0" onchange="showValue()" />
+                <p class="lowHigh">Q. 途中で音源が移動したように聞こえましたか？</p>
+                <select id="selectMv04_2" onchange="saveAnsFunc(2)">
+                    <option value="">*選んでください</option>
+                    <option value="1">はい</option>
+                    <option value="0">いいえ</option>
+                </select>
+                <button onclick="OkButtonFunc()">OK!</button>
+            </td>
+        </tr>
+    </table>
+    <!--評価回答-->
+    <form name="selectbox">
+        <p class="lowHigh">Q. 音が選びやすい(聞き比べがやりやすい)のはどちらでしたか？</p>
+        <select id="selectEf04" onchange="saveAnsFunc(1)">
+            <option value="">*選んでください</option>
+            <option value="1">#1</option>
+            <option value="2">#2</option>
+            <option value="0">どちらも変わらなかった</option>
+        </select>
+    </form>
+    <!--結果を書き込み-->
+    <button onclick="saveArrayFunc();">Answer4 Save</button>
+    <a id="saveArray" href=""></a>
+    <p class="ls_normal"></p>
+
+    <!-- <<Data 5>>--------------------------------------------------------------------------------------------- -->
+    <hr align="left" width="1200" color="#ffc8c8">
+    <h3 style="padding-left:10pt">Data 5. 目覚まし時計の音が最も聞き取りやすいものをそれぞれ選んでください</h3>
+    <!--音の再生・選択-->
+    <table border="1" width="900" height="100">
+        <tr>
+            <!--#1-->
+            <td>
+                <script language="JavaScript">document.write("#1".bold())</script>
+                <button onclick="AudioButtonFunc()">Play/Stop</button>
+                <input id="slider05_1" type="range" min="0" max="7" step="1" value="0" onchange="showValue()" />
+                <p class="lowHigh">Q. 途中で音源が移動したように聞こえましたか？</p>
+                <select id="selectMv05_1" onchange="saveAnsFunc(2)">
+                    <option value="">*選んでください</option>
+                    <option value="1">はい</option>
+                    <option value="0">いいえ</option>
+                </select>
+                <button onclick="OkButtonFunc()">OK!</button>
+            </td>
+            <!--#2-->
+            <td>
+                <script language="JavaScript">document.write("#2".bold())</script>
+                <button onclick="AudioButtonFunc()">Play/Stop</button>
+                <input id="slider05_2" type="range" min="0" max="7" step="1" value="0" onchange="showValue()" />
+                <p class="lowHigh">Q. 途中で音源が移動したように聞こえましたか？</p>
+                <select id="selectMv05_2" onchange="saveAnsFunc(2)">
+                    <option value="">*選んでください</option>
+                    <option value="1">はい</option>
+                    <option value="0">いいえ</option>
+                </select>
+                <button onclick="OkButtonFunc()">OK!</button>
+            </td>
+        </tr>
+    </table>
+    <!--評価回答-->
+    <form name="selectbox">
+        <p class="lowHigh">Q. 音が選びやすい(聞き比べがやりやすい)のはどちらでしたか？</p>
+        <select id="selectEf05" onchange="saveAnsFunc(1)">
+            <option value="">*選んでください</option>
+            <option value="1">#1</option>
+            <option value="2">#2</option>
+            <option value="0">どちらも変わらなかった</option>
+        </select>
+    </form>
+    <!--結果を書き込み-->
+    <button onclick="saveArrayFunc();">Answer5 Save</button>
+    <a id="saveArray" href=""></a>
+    <p class="ls_normal"></p>
+
+    <!-- <<Data 6>>--------------------------------------------------------------------------------------------- -->
+    <hr align="left" width="1200" color="#ffc8c8">
+    <h3 style="padding-left:10pt">Data 6. 男性と女性の声がどちらも聞き取りやすいものを選んでください</h3>
+    <!--音の再生・選択-->
+    <table border="1" width="900" height="100">
+        <tr>
+            <!--#1-->
+            <td>
+                <script language="JavaScript">document.write("#1".bold())</script>
+                <button onclick="AudioButtonFunc()">Play/Stop</button>
+                <input id="slider06_1" type="range" min="0" max="7" step="1" value="0" onchange="showValue()" />
+                <p class="lowHigh">Q. 途中で音源が移動したように聞こえましたか？</p>
+                <select id="selectMv06_1" onchange="saveAnsFunc(2)">
+                    <option value="">*選んでください</option>
+                    <option value="1">はい</option>
+                    <option value="0">いいえ</option>
+                </select>
+                <button onclick="OkButtonFunc()">OK!</button>
+            </td>
+            <!--#2-->
+            <td>
+                <script language="JavaScript">document.write("#2".bold())</script>
+                <button onclick="AudioButtonFunc()">Play/Stop</button>
+                <input id="slider06_2" type="range" min="0" max="7" step="1" value="0" onchange="showValue()" />
+                <p class="lowHigh">Q. 途中で音源が移動したように聞こえましたか？</p>
+                <select id="selectMv06_2" onchange="saveAnsFunc(2)">
+                    <option value="">*選んでください</option>
+                    <option value="1">はい</option>
+                    <option value="0">いいえ</option>
+                </select>
+                <button onclick="OkButtonFunc()">OK!</button>
+            </td>
+        </tr>
+    </table>
+    <!--評価回答-->
+    <form name="selectbox">
+        <p class="lowHigh">Q. 音が選びやすい(聞き比べがやりやすい)のはどちらでしたか？</p>
+        <select id="selectEf06" onchange="saveAnsFunc(1)">
+            <option value="">*選んでください</option>
+            <option value="1">#1</option>
+            <option value="2">#2</option>
+            <option value="0">どちらも変わらなかった</option>
+        </select>
+    </form>
+    <!--結果を書き込み-->
+    <button onclick="saveArrayFunc();">Answer6 Save</button>
+    <a id="saveArray" href=""></a>
+    <p class="ls_normal"></p>
+
+    <!-- <<Data 7>>--------------------------------------------------------------------------------------------- -->
+    <hr align="left" width="1200" color="#ffc8c8">
+    <h3 style="padding-left:10pt">Data 7. 目覚まし時計の音と女性の声がどちらも聞き取りやすいものを選んでください</h3>
+    <!--音の再生・選択-->
+    <table border="1" width="900" height="100">
+        <tr>
+            <!--#1-->
+            <td>
+                <script language="JavaScript">document.write("#1".bold())</script>
+                <button onclick="AudioButtonFunc()">Play/Stop</button>
+                <input id="slider07_1" type="range" min="0" max="7" step="1" value="0" onchange="showValue()" />
+                <p class="lowHigh">Q. 途中で音源が移動したように聞こえましたか？</p>
+                <select id="selectMv07_1" onchange="saveAnsFunc(2)">
+                    <option value="">*選んでください</option>
+                    <option value="1">はい</option>
+                    <option value="0">いいえ</option>
+                </select>
+                <button onclick="OkButtonFunc()">OK!</button>
+            </td>
+            <!--#2-->
+            <td>
+                <script language="JavaScript">document.write("#2".bold())</script>
+                <button onclick="AudioButtonFunc()">Play/Stop</button>
+                <input id="slider07_2" type="range" min="0" max="7" step="1" value="0" onchange="showValue()" />
+                <p class="lowHigh">Q. 途中で音源が移動したように聞こえましたか？</p>
+                <select id="selectMv07_2" onchange="saveAnsFunc(2)">
+                    <option value="">*選んでください</option>
+                    <option value="1">はい</option>
+                    <option value="0">いいえ</option>
+                </select>
+                <button onclick="OkButtonFunc()">OK!</button>
+            </td>
+        </tr>
+    </table>
+    <!--評価回答-->
+    <form name="selectbox">
+        <p class="lowHigh">Q. 音が選びやすい(聞き比べがやりやすい)のはどちらでしたか？</p>
+        <select id="selectEf07" onchange="saveAnsFunc(1)">
+            <option value="">*選んでください</option>
+            <option value="1">#1</option>
+            <option value="2">#2</option>
+            <option value="0">どちらも変わらなかった</option>
+        </select>
+    </form>
+    <!--結果を書き込み-->
+    <button onclick="saveArrayFunc();">Answer7 Save</button>
+    <a id="saveArray" href=""></a>
+    <p class="ls_normal"></p>
+
+    <!-- <<Data 8>>--------------------------------------------------------------------------------------------- -->
+    <hr align="left" width="1200" color="#ffc8c8">
+    <h3 style="padding-left:10pt">Data 8. 男性の声が最も聞き取りやすいものを選んでください</h3>
+    <!--音の再生・選択-->
+    <table border="1" width="900" height="100">
+        <tr>
+            <!--#1-->
+            <td>
+                <script language="JavaScript">document.write("#1".bold())</script>
+                <button onclick="AudioButtonFunc()">Play/Stop</button>
+                <input id="slider08_1" type="range" min="0" max="7" step="1" value="0" onchange="showValue()" />
+                <p class="lowHigh">Q. 途中で音源が移動したように聞こえましたか？</p>
+                <select id="selectMv08_1" onchange="saveAnsFunc(2)">
+                    <option value="">*選んでください</option>
+                    <option value="1">はい</option>
+                    <option value="0">いいえ</option>
+                </select>
+                <button onclick="OkButtonFunc()">OK!</button>
+            </td>
+            <!--#2-->
+            <td>
+                <script language="JavaScript">document.write("#2".bold())</script>
+                <button onclick="AudioButtonFunc()">Play/Stop</button>
+                <input id="slider08_2" type="range" min="0" max="7" step="1" value="0" onchange="showValue()" />
+                <p class="lowHigh">Q. 途中で音源が移動したように聞こえましたか？</p>
+                <select id="selectMv08_2" onchange="saveAnsFunc(2)">
+                    <option value="">*選んでください</option>
+                    <option value="1">はい</option>
+                    <option value="0">いいえ</option>
+                </select>
+                <button onclick="OkButtonFunc()">OK!</button>
+            </td>
+        </tr>
+    </table>
+    <!--評価回答-->
+    <form name="selectbox">
+        <p class="lowHigh">Q. 音が選びやすい(聞き比べがやりやすい)のはどちらでしたか？</p>
+        <select id="selectEf08" onchange="saveAnsFunc(1)">
+            <option value="">*選んでください</option>
+            <option value="1">#1</option>
+            <option value="2">#2</option>
+            <option value="0">どちらも変わらなかった</option>
+        </select>
+    </form>
+    <!--結果を書き込み-->
+    <button onclick="saveArrayFunc();">Answer8 Save</button>
+    <a id="saveArray" href=""></a>
+    <p class="ls_normal"></p>
+    
+    <!-- <<Data 9>>------------------------------------------------------------------------------------------- -->
+    <hr align="left" width="1100" color="#ffc8c8">
+    <h3 style="padding-left:10pt">Data 9. 女性の声が最も聞き取りやすいものをそれぞれ選んでください</h3>
+    <!--音の再生・選択-->
+    <table border="1" width="900" height="100">
+        <tr>
+            <!--#1-->
+            <td>
+                <script language="JavaScript">document.write("#1".bold())</script>
+                <button onclick="AudioButtonFunc()">Play/Stop</button>
+                <input id="slider09_1" type="range" min="0" max="7" step="1" value="0" onchange="showValue()" />
+                <p class="lowHigh">Q. 途中で音源が移動したように聞こえましたか？</p>
+                <select id="selectMv09_1" onchange="saveAnsFunc(2)">
+                    <option value="">*選んでください</option>
+                    <option value="1">はい</option>
+                    <option value="0">いいえ</option>
+                </select>
+                <button onclick="OkButtonFunc()">OK!</button>
+            </td>
+            <!--#2-->
+            <td>
+                <script language="JavaScript">document.write("#2".bold())</script>
+                <button onclick="AudioButtonFunc()">Play/Stop</button>
+                <input id="slider09_2" type="range" min="0" max="7" step="1" value="0" onchange="showValue()" />
+                <p class="lowHigh">Q. 途中で音源が移動したように聞こえましたか？</p>
+                <select id="selectMv09_2" onchange="saveAnsFunc(2)">
+                    <option value="">*選んでください</option>
+                    <option value="1">はい</option>
+                    <option value="0">いいえ</option>
+                </select>
+                <button onclick="OkButtonFunc()">OK!</button>
+            </td>
+        </tr>
+    </table>
+    <!--評価回答-->
+    <form name="selectbox">
+        <p class="lowHigh">Q. 音が選びやすい(聞き比べがやりやすい)のはどちらでしたか？</p>
+        <select id="selectEf09" onchange="saveAnsFunc(1)">
+            <option value="">*選んでください</option>
+            <option value="1">#1</option>
+            <option value="2">#2</option>
+            <option value="0">どちらも変わらなかった</option>
+        </select>
+    </form>
+    <!--結果を書き込み-->
+    <button onclick="saveArrayFunc();">Answer9 Save</button>
+    <a id="saveArray" href=""></a>
+    <p class="ls_normal"></p>
+    
+    <!-- <<Data 10>>------------------------------------------------------------------------------------------- -->
+    <hr align="left" width="1100" color="#ffc8c8">
+    <h3 style="padding-left:10pt">Data 10. 目覚まし時計の音と女性の声がどちらも聞き取りやすいものを選んでください</h3>
+    <!--音の再生・選択-->
+    <table border="1" width="900" height="100">
+        <tr>
+            <!--#1-->
+            <td>
+                <script language="JavaScript">document.write("#1".bold())</script>
+                <button onclick="AudioButtonFunc()">Play/Stop</button>
+                <input id="slider10_1" type="range" min="0" max="7" step="1" value="0" onchange="showValue()" />
+                <p class="lowHigh">Q. 途中で音源が移動したように聞こえましたか？</p>
+                <select id="selectMv10_1" onchange="saveAnsFunc(2)">
+                    <option value="">*選んでください</option>
+                    <option value="1">はい</option>
+                    <option value="0">いいえ</option>
+                </select>
+                <button onclick="OkButtonFunc()">OK!</button>
+            </td>
+            <!--#2-->
+            <td>
+                <script language="JavaScript">document.write("#2".bold())</script>
+                <button onclick="AudioButtonFunc()">Play/Stop</button>
+                <input id="slider10_2" type="range" min="0" max="7" step="1" value="0" onchange="showValue()" />
+                <p class="lowHigh">Q. 途中で音源が移動したように聞こえましたか？</p>
+                <select id="selectMv10_2" onchange="saveAnsFunc(2)">
+                    <option value="">*選んでください</option>
+                    <option value="1">はい</option>
+                    <option value="0">いいえ</option>
+                </select>
+                <button onclick="OkButtonFunc()">OK!</button>
+            </td>
+        </tr>
+    </table>
+    <!--評価回答-->
+    <form name="selectbox">
+        <p class="lowHigh">Q. 音が選びやすい(聞き比べがやりやすい)のはどちらでしたか？</p>
+        <select id="selectEf10" onchange="saveAnsFunc(1)">
+            <option value="">*選んでください</option>
+            <option value="1">#1</option>
+            <option value="2">#2</option>
+            <option value="0">どちらも変わらなかった</option>
+        </select>
+    </form>
+    <!--結果を書き込み-->
+    <button onclick="saveArrayFunc();">Answer10 Save</button>
+    <a id="saveArray" href=""></a>
+    <p class="ls_normal"></p>
+    
+    <!-- <<Data 11>>------------------------------------------------------------------------------------------- -->
+    <hr align="left" width="1100" color="#ffc8c8">
+    <h3 style="padding-left:10pt">Data 11. 男性と女性の声がどちらも聞き取りやすいものを選んでください</h3>
+    <!--音の再生・選択-->
+    <table border="1" width="900" height="100">
+        <tr>
+            <!--#1-->
+            <td>
+                <script language="JavaScript">document.write("#1".bold())</script>
+                <button onclick="AudioButtonFunc()">Play/Stop</button>
+                <input id="slider11_1" type="range" min="0" max="7" step="1" value="0" onchange="showValue()" />
+                <p class="lowHigh">Q. 途中で音源が移動したように聞こえましたか？</p>
+                <select id="selectMv11_1" onchange="saveAnsFunc(2)">
+                    <option value="">*選んでください</option>
+                    <option value="1">はい</option>
+                    <option value="0">いいえ</option>
+                </select>
+                <button onclick="OkButtonFunc()">OK!</button>
+            </td>
+            <!--#2-->
+            <td>
+                <script language="JavaScript">document.write("#2".bold())</script>
+                <button onclick="AudioButtonFunc()">Play/Stop</button>
+                <input id="slider11_2" type="range" min="0" max="7" step="1" value="0" onchange="showValue()" />
+                <p class="lowHigh">Q. 途中で音源が移動したように聞こえましたか？</p>
+                <select id="selectMv11_2" onchange="saveAnsFunc(2)">
+                    <option value="">*選んでください</option>
+                    <option value="1">はい</option>
+                    <option value="0">いいえ</option>
+                </select>
+                <button onclick="OkButtonFunc()">OK!</button>
+            </td>
+        </tr>
+    </table>
+    <!--評価回答-->
+    <form name="selectbox">
+        <p class="lowHigh">Q. 音が選びやすい(聞き比べがやりやすい)のはどちらでしたか？</p>
+        <select id="selectEf11" onchange="saveAnsFunc(1)">
+            <option value="">*選んでください</option>
+            <option value="1">#1</option>
+            <option value="2">#2</option>
+            <option value="0">どちらも変わらなかった</option>
+        </select>
+    </form>
+    <!--結果を書き込み-->
+    <button onclick="saveArrayFunc();">Answer11 Save</button>
+    <a id="saveArray" href=""></a>
+    <p class="ls_normal"></p>
+    
+    <!-- <<Data 12>>------------------------------------------------------------------------------------------- -->
+    <hr align="left" width="1100" color="#ffc8c8">
+    <h3 style="padding-left:10pt">Data 12. 女性の声が最も聞き取りやすいものをそれぞれ選んでください</h3>
+    <!--音の再生・選択-->
+    <table border="1" width="900" height="100">
+        <tr>
+            <!--#1-->
+            <td>
+                <script language="JavaScript">document.write("#1".bold())</script>
+                <button onclick="AudioButtonFunc()">Play/Stop</button>
+                <input id="slider12_1" type="range" min="0" max="7" step="1" value="0" onchange="showValue()" />
+                <p class="lowHigh">Q. 途中で音源が移動したように聞こえましたか？</p>
+                <select id="selectMv12_1" onchange="saveAnsFunc(2)">
+                    <option value="">*選んでください</option>
+                    <option value="1">はい</option>
+                    <option value="0">いいえ</option>
+                </select>
+                <button onclick="OkButtonFunc()">OK!</button>
+            </td>
+            <!--#2-->
+            <td>
+                <script language="JavaScript">document.write("#2".bold())</script>
+                <button onclick="AudioButtonFunc()">Play/Stop</button>
+                <input id="slider12_2" type="range" min="0" max="7" step="1" value="0" onchange="showValue()" />
+                <p class="lowHigh">Q. 途中で音源が移動したように聞こえましたか？</p>
+                <select id="selectMv12_2" onchange="saveAnsFunc(2)">
+                    <option value="">*選んでください</option>
+                    <option value="1">はい</option>
+                    <option value="0">いいえ</option>
+                </select>
+                <button onclick="OkButtonFunc()">OK!</button>
+            </td>
+        </tr>
+    </table>
+    <!--評価回答-->
+    <form name="selectbox">
+        <p class="lowHigh">Q. 音が選びやすい(聞き比べがやりやすい)のはどちらでしたか？</p>
+        <select id="selectEf12" onchange="saveAnsFunc(1)">
+            <option value="">*選んでください</option>
+            <option value="1">#1</option>
+            <option value="2">#2</option>
+            <option value="0">どちらも変わらなかった</option>
+        </select>
+    </form>
+    <!--結果を書き込み-->
+    <button onclick="saveArrayFunc();">Answer12 Save</button>
+    <a id="saveArray" href=""></a>
+    <p class="ls_normal"></p>
+    
+    <!--最後に回答をファイルに保存-->
+    <p class="ls_double"><br /></p>
+    <button onclick="saveFunc();">FINISH</button>
+    <a id="anchor" href=""></a>
+</body>
+</html>
