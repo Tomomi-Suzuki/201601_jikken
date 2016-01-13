@@ -97,6 +97,10 @@
 
         // 各ファイルが終わったら回答漏れがないか確認，なければ次の音データを読み込み
         function saveArrayFunc() {
+            console.log(filePlaying);
+            console.log(ptnPlaying);
+            console.log(selectAns[filePlaying]);
+            console.log(selectAns);
             for (var i = 0; i < 5; ++i) {
                 if (selectAns[filePlaying][i] != null) {
                     AnsFill = AnsFill + 1;

@@ -32,7 +32,6 @@ function ChangeVolume() {
     for (var i = 0; i < array.length; ++i) {
         if (i == playNum) {
             array[i].volume = 1.0;
-            console.log(point[filePlaying][ptnPlaying][i]);
         } else {
             array[i].volume = 0.0;
         }
