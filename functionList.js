@@ -97,19 +97,19 @@ function saveAnsFunc(n_q) {
     var fileAns = filePlaying + 1;
     if (fileAns < 10) {
         var nameEf = "selectEf0" + fileAns;
-        var nameMv = "selectMv0" + fileAns;
+        //var nameMv = "selectMv0" + fileAns;
     } else {
         var nameEf = "selectEf" + fileAns;
         var nameMv = "selectMv" + fileAns;
     }
     nameMv = nameMv + "_" + ptnAsking;
     var idEf = document.getElementById(nameEf);
-    var idMv = document.getElementById(nameMv);
+    //var idMv = document.getElementById(nameMv);
     if (n_q == 1) {
         selectAns[filePlaying][2] = idEf.options[idEf.selectedIndex].value;
-    } else if (n_q == 2) {
-        selectAns[filePlaying][3 + ptnPlaying] = idMv.options[idMv.selectedIndex].value;
-    }
+    //} else if (n_q == 2) {
+    //    selectAns[filePlaying][3 + ptnPlaying] = idMv.options[idMv.selectedIndex].value;
+    //}
 }   // END saveAnsFunc
 
 // スライダーが動かされたら選んでいる場所を表示
